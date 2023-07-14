@@ -1,0 +1,26 @@
+global:
+  image: python:latest
+
+jobs:
+  - name: install deps and build container
+    commands:
+      - python -m venv count
+      - . count/bin/activate
+      - pip install numpy flake8 pytest
+      - pip freeze > requirements.txt
+    artifacts:
+      - name: count
+        path: count/
+
+  - name: test
+    commands:
+      - . count/bin/activate
+      - pip install -r requirements.txt
+      - pytest -v --cov=count/
+    resources:
+      - name: count
+        path: ./
+
+  - name: echo message
+    commands:
+      - echo "Hello, world"
